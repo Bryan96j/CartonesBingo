@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRAZY Bingo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial Black', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .screen {
+            display: none;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .title-screen {
+            text-align: center;
+        }
+
+        .title {
+            font-size: 4em;
+            color: #667eea;
+            text-shadow: 3px 3px 0 #764ba2;
+            margin-bottom: 20px;
+            letter-spacing: 5px;
+        }
+
+        .subtitle {
+            font-size: 1.5em;
+            color: #764ba2;
+            margin-bottom: 40px;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 60px;
+            font-size: 1.5em;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .game-screen {
+            text-align: center;
+        }
+
+        .game-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 30px;
+        }
+
+        .bingo-card {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 30px;
+            background: #f0f0f0;
+            padding: 15px;
+            border-radius: 15px;
+        }
+
+        .bingo-number {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: white;
+            border: 3px solid #667eea;
+            border-radius: 10px;
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .bingo-number:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .bingo-number.marked {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #764ba2;
+        }
+
+        .btn-small {
+            padding: 15px 40px;
+            font-size: 1.2em;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-title {
+            font-size: 1.5em;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-confirm {
+            background: #e74c3c;
+        }
+
+        .btn-cancel {
+            background: #95a5a6;
+        }
+
+        .btn-modal {
+            padding: 15px 30px;
+            font-size: 1em;
+        }
+
+        .loading-screen {
+            text-align: center;
+        }
+
+        .loading-title {
+            font-size: 2em;
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .loading-message {
+            font-size: 1.3em;
+            color: #764ba2;
+            margin-bottom: 15px;
+        }
+
+        .countdown {
+            font-size: 3em;
+            color: #667eea;
+            font-weight: bold;
+            text-shadow: 2px 2px 0 #764ba2;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 30px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Pantalla de Título -->
+        <div class="screen active" id="titleScreen">
+            <div class="title-screen">
+                <h1 class="title">CRAZY</h1>
+                <p class="subtitle">BINGO</p>
+                <button class="btn" onclick="startGame()">INGRESAR</button>
+            </div>
+        </div>
+
+        <!-- Pantalla de Carga -->
+        <div class="screen" id="loadingScreen">
+            <div class="loading-screen">
+                <h2 class="loading-title">CRAZY BINGO</h2>
+                <p class="loading-message">Generando cartón probando tu suerte...</p>
+                <div class="countdown" id="countdown">10</div>
+                <div class="spinner"></div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Juego -->
+        <div class="screen" id="gameScreen">
+            <div class="game-screen">
+                <h2 class="game-title">CRAZY BINGO</h2>
+                <div class="bingo-card" id="bingoCard"></div>
+                <button class="btn btn-small" onclick="showExitModal()">INICIO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación para Desmarcar -->
+    <div class="modal" id="confirmModal">
+        <div class="modal-content">
+            <h3 class="modal-title">¿Seguro que desea eliminar este número?</h3>
+            <div class="modal-buttons">
+                <button class="btn btn-modal btn-confirm" onclick="confirmUnmark()">SÍ</button>
+                <button class="btn btn-modal btn-cancel" onclick="closeModal()">NO</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Confirmación para Salir -->
+    <div class="modal" id="exitModal">
+        <div class="modal-content">
+            <h3 class="modal-title">¿Seguro que desea salir? Perderás tu cartón y tu suerte</h3>
+            <div class="modal-buttons">
+                <button class="btn btn-modal btn-confirm" onclick="confirmExit()">ACEPTAR</button>
+                <button class="btn btn-modal btn-cancel" onclick="closeExitModal()">CANCELAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = null;
+        let countdownInterval = null;
+
+        // Crear contexto de audio
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+
+        // Función para reproducir sonido
+        function playSound(frequency = 800, duration = 100) {
+            // Reanudar el contexto de audio si está suspendido
+            if (audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            oscillator.frequency.value = frequency;
+            oscillator.type = 'sine';
+            
+            gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+            gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration / 1000);
+            
+            oscillator.start(audioContext.currentTime);
+            oscillator.stop(audioContext.currentTime + duration / 1000);
+        }
+
+        function generateBingoCard() {
+            const numbers = [];
+            const usedNumbers = new Set();
+            
+            // Generar 25 números únicos del 1 al 90
+            while (numbers.length < 25) {
+                const num = Math.floor(Math.random() * 90) + 1;
+                if (!usedNumbers.has(num)) {
+                    usedNumbers.add(num);
+                    numbers.push(num);
+                }
+            }
+            
+            const bingoCard = document.getElementById('bingoCard');
+            bingoCard.innerHTML = '';
+            
+            numbers.forEach(num => {
+                const cell = document.createElement('div');
+                cell.className = 'bingo-number';
+                cell.textContent = num;
+                cell.onclick = () => toggleNumber(cell);
+                bingoCard.appendChild(cell);
+            });
+        }
+
+        function toggleNumber(element) {
+            playSound(600, 80);
+            if (!element.classList.contains('marked')) {
+                element.classList.add('marked');
+            } else {
+                currentNumber = element;
+                showModal();
+            }
+        }
+
+        function showModal() {
+            playSound(500, 100);
+            document.getElementById('confirmModal').classList.add('active');
+        }
+
+        function closeModal() {
+            playSound(400, 80);
+            document.getElementById('confirmModal').classList.remove('active');
+            currentNumber = null;
+        }
+
+        function confirmUnmark() {
+            playSound(700, 100);
+            if (currentNumber) {
+                currentNumber.classList.remove('marked');
+            }
+            closeModal();
+        }
+
+        function startGame() {
+            playSound(900, 120);
+            document.getElementById('titleScreen').classList.remove('active');
+            document.getElementById('loadingScreen').classList.add('active');
+            
+            let seconds = 10;
+            document.getElementById('countdown').textContent = seconds;
+            
+            countdownInterval = setInterval(() => {
+                seconds--;
+                document.getElementById('countdown').textContent = seconds;
+                playSound(600, 50);
+                
+                if (seconds <= 0) {
+                    clearInterval(countdownInterval);
+                    playSound(1000, 150);
+                    document.getElementById('loadingScreen').classList.remove('active');
+                    document.getElementById('gameScreen').classList.add('active');
+                    generateBingoCard();
+                }
+            }, 1000);
+        }
+
+        function showExitModal() {
+            playSound(500, 100);
+            document.getElementById('exitModal').classList.add('active');
+        }
+
+        function closeExitModal() {
+            playSound(400, 80);
+            document.getElementById('exitModal').classList.remove('active');
+        }
+
+        function confirmExit() {
+            playSound(700, 100);
+            closeExitModal();
+            goToTitle();
+        }
+
+        function goToTitle() {
+            document.getElementById('gameScreen').classList.remove('active');
+            document.getElementById('titleScreen').classList.add('active');
+        }
+
+        // Cerrar modal al hacer clic fuera
+        document.getElementById('confirmModal').addEventListener('click', (e) => {
+            if (e.target.id === 'confirmModal') {
+                closeModal();
+            }
+        });
+
+        document.getElementById('exitModal').addEventListener('click', (e) => {
+            if (e.target.id === 'exitModal') {
+                closeExitModal();
+            }
+        });
+    </script>
+</body>
+</html>
