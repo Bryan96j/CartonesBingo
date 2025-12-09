@@ -2,21 +2,40 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>CRAZY Bingo</title>
     <style>
+        html {
+            overscroll-behavior-y: contain;
+            overflow: hidden;
+            height: 100%;
+        }
+
         body {
             overscroll-behavior-y: contain;
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            touch-action: pan-y;
         }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Arial Black', Arial, sans-serif;
+        #app-wrapper {
+            width: 100%;
+            height: 100vh;
+            overflow-y: auto;
+            overflow-x: hidden;
+            -webkit-overflow-scrolling: touch;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .inner-container {
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -314,38 +333,42 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Pantalla de Título -->
-        <div class="screen active" id="titleScreen">
-            <div class="settings-icon" onclick="showSettingsModal()">
-                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
-                </svg>
-            </div>
-            <div class="title-screen">
-                <h1 class="title">CRAZY</h1>
-                <p class="subtitle">BINGO</p>
-                <button class="btn" onclick="startGame()">INGRESAR</button>
-            </div>
-        </div>
+    <div id="app-wrapper">
+        <div class="inner-container">
+            <div class="container">
+                <!-- Pantalla de Título -->
+                <div class="screen active" id="titleScreen">
+                    <div class="settings-icon" onclick="showSettingsModal()">
+                        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.07-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.74,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.07,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.44-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.47-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/>
+                        </svg>
+                    </div>
+                    <div class="title-screen">
+                        <h1 class="title">CRAZY</h1>
+                        <p class="subtitle">BINGO</p>
+                        <button class="btn" onclick="startGame()">INGRESAR</button>
+                    </div>
+                </div>
 
-        <!-- Pantalla de Carga -->
-        <div class="screen" id="loadingScreen">
-            <div class="loading-screen">
-                <h2 class="loading-title">CRAZY BINGO</h2>
-                <p class="loading-message">Generando cartón, probando tu suerte...</p>
-                <div class="countdown" id="countdown">10</div>
-                <div class="spinner"></div>
-            </div>
-        </div>
+                <!-- Pantalla de Carga -->
+                <div class="screen" id="loadingScreen">
+                    <div class="loading-screen">
+                        <h2 class="loading-title">CRAZY BINGO</h2>
+                        <p class="loading-message">Generando cartón, probando tu suerte...</p>
+                        <div class="countdown" id="countdown">10</div>
+                        <div class="spinner"></div>
+                    </div>
+                </div>
 
-        <!-- Pantalla de Juego -->
-        <div class="screen" id="gameScreen">
-            <div class="game-screen">
-                <h2 class="game-title">CRAZY BINGO</h2>
-                <div class="bingo-card" id="bingoCard"></div>
-                <button class="bingo-button" onclick="playBingoSound()">¡BINGO!</button>
-                <button class="btn btn-small" onclick="showExitModal()">INICIO</button>
+                <!-- Pantalla de Juego -->
+                <div class="screen" id="gameScreen">
+                    <div class="game-screen">
+                        <h2 class="game-title">CRAZY BINGO</h2>
+                        <div class="bingo-card" id="bingoCard"></div>
+                        <button class="bingo-button" onclick="playBingoSound()">¡BINGO!</button>
+                        <button class="btn btn-small" onclick="showExitModal()">INICIO</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -390,16 +413,30 @@
     <script>
         let currentNumber = null;
         let countdownInterval = null;
-        let maxNumber = 90; // Valor por defecto
-        let bingoAudio = new Audio('bingo.mp3'); // Audio del bingo
+        let maxNumber = 90;
+        let bingoAudio = new Audio('bingo.mp3');
+
+        // Prevenir pull-to-refresh en móviles
+        let startY = 0;
+        const appWrapper = document.getElementById('app-wrapper');
+
+        document.addEventListener('touchstart', function(e) {
+            startY = e.touches[0].pageY;
+        }, { passive: true });
+
+        document.addEventListener('touchmove', function(e) {
+            const y = e.touches[0].pageY;
+            // Prevenir solo si estamos en la parte superior del wrapper y arrastramos hacia abajo
+            if (appWrapper.scrollTop === 0 && y > startY) {
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         // Crear contexto de audio
         const AudioContext = window.AudioContext || window.webkitAudioContext;
         const audioContext = new AudioContext();
 
-        // Función para reproducir sonido
         function playSound(frequency = 800, duration = 100) {
-            // Reanudar el contexto de audio si está suspendido
             if (audioContext.state === 'suspended') {
                 audioContext.resume();
             }
@@ -424,7 +461,6 @@
             const numbers = [];
             const usedNumbers = new Set();
             
-            // Generar 25 números únicos del 1 al maxNumber seleccionado
             while (numbers.length < 25) {
                 const num = Math.floor(Math.random() * maxNumber) + 1;
                 if (!usedNumbers.has(num)) {
@@ -518,7 +554,6 @@
             document.getElementById('titleScreen').classList.add('active');
         }
 
-        // Funciones para el modal de configuración
         function showSettingsModal() {
             playSound(500, 100);
             document.getElementById('settingsModal').classList.add('active');
@@ -533,21 +568,18 @@
             playSound(600, 80);
             maxNumber = number;
             
-            // Actualizar visualmente la opción seleccionada
             const options = document.querySelectorAll('.option-btn');
             options.forEach(btn => btn.classList.remove('selected'));
             event.target.classList.add('selected');
         }
 
-        // Función para reproducir el sonido de BINGO
         function playBingoSound() {
-            bingoAudio.currentTime = 0; // Reiniciar el audio si ya se estaba reproduciendo
+            bingoAudio.currentTime = 0;
             bingoAudio.play().catch(error => {
                 console.error('Error al reproducir audio:', error);
             });
         }
 
-        // Cerrar modal al hacer clic fuera
         document.getElementById('confirmModal').addEventListener('click', (e) => {
             if (e.target.id === 'confirmModal') {
                 closeModal();
